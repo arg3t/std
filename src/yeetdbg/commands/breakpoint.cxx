@@ -42,6 +42,7 @@ int BreakpointManage::handle_command(std::vector<std::string> cmd) {
       t->add_row(c++, it.is_enabled(), int_to_hex(it.get_addr()), 0);
     }
 
+    std::cout << t->to_string();
   } else if (is_prefix(subcmd, "remove")) {
     try {
       return del_bp(stoi(param));

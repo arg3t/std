@@ -23,9 +23,9 @@ bool is_prefix(const std::string& s, const std::string& of){
 }
 
 std::string int_to_hex(long i){
-  std::stringstream stream;
-  stream << "0x"
+  std::stringstream *stream = new std::stringstream();
+  *stream << "0x"
          << std::setfill ('0') << std::setw(sizeof(long)*2)
          << std::hex << i;
-  return stream.str();
+  return stream->str();
 }
