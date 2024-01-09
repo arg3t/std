@@ -12,6 +12,7 @@ namespace cmd {
 
       virtual std::string command() const = 0;
       virtual std::string description() const = 0;
+      virtual bool should_wait() const = 0;
 
 
       virtual ~Command() {}

@@ -3,6 +3,9 @@
 #include <breakpoint.hxx>
 #include <vector>
 
+#ifndef BREAKPOINT_COMMAND_HXX
+#define BREAKPOINT_COMMAND_HXX
+
 namespace cmd {
   class BreakpointManage: public Command {
     public:
@@ -17,6 +20,8 @@ namespace cmd {
         return "Manage breakpoints";
       };
 
+      bool should_wait() const override { return false; }
+
     private:
       std::vector<yeetdbg::Breakpoint> breakpoints;
 
@@ -26,3 +31,4 @@ namespace cmd {
       int add_bp(std::string);
   };
 }
+#endif

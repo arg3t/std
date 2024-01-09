@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <sstream>
 
 #include "utils.hxx"
@@ -19,4 +20,12 @@ bool is_prefix(const std::string& s, const std::string& of){
   if (s.size() > of.size()) return false;
 
   return std::equal(s.begin(), s.end(), of.begin());
+}
+
+std::string int_to_hex(long i){
+  std::stringstream stream;
+  stream << "0x"
+         << std::setfill ('0') << std::setw(sizeof(long)*2)
+         << std::hex << i;
+  return stream.str();
 }
