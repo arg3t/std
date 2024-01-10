@@ -1,4 +1,6 @@
 #include <cstdint>
+#include <memory>
+#include <process.hxx>
 
 #ifndef BREAKPOINT_HXX
 #define BREAKPOINT_HXX
@@ -13,16 +15,18 @@ namespace yeetdbg {
 
   class Breakpoint {
     public:
-      Breakpoint(uint64_t addr, uint8_t pid);
-      uint64_t get_addr() { return m_addr; }
+      Breakpoint(uint64_t addr, Process *proc, bool relative): m_addr(addr), m_proc(proc), m_relative(relative), status(DISABLED) {}
+      uint64_t get_addr();
       Status is_enabled() { return status; }
+      bool is_relative() { return m_relative; }
 
       void enable();
       void disable();
 
     private:
       uint64_t m_addr;
-      uint8_t m_pid;
+      bool m_relative;
+      Process *m_proc;
 
       uint64_t old_data;
       Status status;

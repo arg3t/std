@@ -9,6 +9,6 @@
 using namespace cmd;
 
 int Continue::handle_command(std::vector<std::string> params) {
-  m_p.resume();
+  m_proc.resume();
   return 0;
 }

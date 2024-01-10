@@ -9,7 +9,7 @@
 namespace cmd {
   class BreakpointManage: public Command {
     public:
-      BreakpointManage(yeetdbg::Process& p): Command(p) {};
+      BreakpointManage(yeetdbg::Process &p): Command(p) {};
       int handle_command(std::vector<std::string>) override;
 
       std::string command() const override {

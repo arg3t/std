@@ -2,7 +2,7 @@
 #define TABLEAU_HXX
 
 #include <cassert>
-#include <iostream>
+#include <breakpoint.hxx>
 #include <sstream>
 #include <string>
 #include <tuple>
@@ -22,6 +22,18 @@ namespace yeetdbg {
 
   std::string toString(T& s){
     return std::to_string(s);
+  }
+
+  std::string toString(bool b){
+    return b ? "true": "false";
+  }
+
+  std::string toString(yeetdbg::Status s){
+    switch(s){
+      case ENABLED: return "Enabled";
+      case DISABLED: return "Disabled";
+      default: return "Unknown";
+    }
   }
 
   std::string pad_str(const std::string& s, int size){

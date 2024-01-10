@@ -10,13 +10,13 @@ namespace yeetdbg {
 
   class Debugger {
     public:
-      Debugger(std::string name, int pid): m_name(std::move(name)), m_pid(pid) {
+      Debugger(std::string name): m_name(std::move(name)) {
         m_commands = std::vector<std::shared_ptr<cmd::Command>>{
-          std::make_shared<cmd::Continue>(cmd::Continue{m_pid}),
-          std::make_shared<cmd::BreakpointManage>(cmd::BreakpointManage{m_pid})
+          std::make_shared<cmd::Continue>(cmd::Continue{process}),
+          std::make_shared<cmd::BreakpointManage>(cmd::BreakpointManage{process})
         };
       }
-      static Debugger start_process(std::string name);
+      void start_process();
 
       void run();
 
@@ -25,7 +25,7 @@ namespace yeetdbg {
       void unknown_command(std::string cmd);
 
       std::string m_name;
-      int m_pid;
+      Process process;
       std::vector<std::shared_ptr<cmd::Command>> m_commands;
   };
 

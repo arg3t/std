@@ -11,16 +11,14 @@
 using namespace yeetdbg;
 
 void Debugger::run(){
-  int wait_status;
   int options = 0;
-
   char* line;
 
-  waitpid(m_pid, &wait_status, options);
+  int wait_status = process.wait(options);
 
   while((line = linenoise("ydb> ")) != nullptr){
     if(handle_command(line))
-      waitpid(m_pid, &wait_status, options);
+      wait_status = process.wait(options);
     linenoiseHistoryAdd(line);
     linenoiseFree(line);
   }
@@ -48,5 +46,7 @@ void Debugger::unknown_command(std::string cmd){
   std::cout << "Command " << cmd << " not found." << std::endl;
 }
 
-Debugger Debugger::start_process(std::string name){
+void Debugger::start_process(){
+  process = Process(m_name, std::vector<std::string>());
+  process.start();
 }

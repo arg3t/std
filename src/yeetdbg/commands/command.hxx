@@ -1,6 +1,7 @@
 #ifndef COMMAND_HXX
 #define COMMAND_HXX
 
+#include <memory>
 #include <string>
 #include <vector>
 #include <process.hxx>
@@ -8,7 +9,7 @@
 namespace cmd {
   class Command {
     public:
-      Command(yeetdbg::Process& p): m_p(p) {};
+      Command(yeetdbg::Process &p): m_proc(p) {};
       virtual int handle_command(std::vector<std::string>) = 0;
 
       virtual std::string command() const = 0;
@@ -19,7 +20,7 @@ namespace cmd {
       virtual ~Command() {}
 
       protected:
-      yeetdbg::Process& m_p;
+      yeetdbg::Process &m_proc;
   };
 }
 

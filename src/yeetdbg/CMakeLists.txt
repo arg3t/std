@@ -3,6 +3,7 @@ add_library(
   utils.cxx
   debugger.cxx
   breakpoint.cxx
+  process.cxx
   commands/continue.cxx
   commands/breakpoint.cxx
 )

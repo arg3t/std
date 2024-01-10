@@ -16,6 +16,7 @@ int main(int argc, char *argv[]) {
 
   char* name = argv[1];
 
-  Debugger debugger = Debugger::start_process(name);
+  Debugger debugger = Debugger(name);
+  debugger.start_process();
   debugger.run();
 }
