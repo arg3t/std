@@ -9,6 +9,6 @@
 using namespace cmd;
 
 int Continue::handle_command(std::vector<std::string> params) {
-  ptrace(PTRACE_CONT, m_pid, nullptr, nullptr);
+  m_p.resume();
   return 0;
 }

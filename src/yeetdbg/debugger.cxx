@@ -49,17 +49,4 @@ void Debugger::unknown_command(std::string cmd){
 }
 
 Debugger Debugger::start_process(std::string name){
-  int pid = fork();
-
-  if (pid == 0) {
-    // Enable debugging on child and start executable
-    ptrace(PTRACE_TRACEME, 0, nullptr, nullptr);
-    execl(name.c_str(), name.c_str(), nullptr);
-    exit(0);
-  } else {
-    std::cout << "Starting debugging " << name << " with PID: " << pid << std::endl;
-
-    Debugger debugger{name, pid};
-    return debugger;
-  }
 }

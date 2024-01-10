@@ -3,11 +3,12 @@
 
 #include <string>
 #include <vector>
+#include <process.hxx>
 
 namespace cmd {
   class Command {
     public:
-      Command(int pid): m_pid(pid) {};
+      Command(yeetdbg::Process& p): m_p(p) {};
       virtual int handle_command(std::vector<std::string>) = 0;
 
       virtual std::string command() const = 0;
@@ -17,7 +18,7 @@ namespace cmd {
       virtual ~Command() {}
 
       protected:
-      int m_pid;
+      yeetdbg::Process& m_p;
   };
 }
 

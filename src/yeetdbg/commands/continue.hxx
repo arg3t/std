@@ -8,7 +8,7 @@
 namespace cmd {
   class Continue: public Command {
     public:
-      Continue(int pid): Command(pid) {};
+      Continue(yeetdbg::Process& p): Command(p) {};
       int handle_command(std::vector<std::string>) override;
 
       std::string command() const override {
