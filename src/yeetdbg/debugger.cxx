@@ -19,29 +19,29 @@ void Debugger::run(){
   waitpid(m_pid, &wait_status, options);
 
   while((line = linenoise("ydb> ")) != nullptr){
-    handle_command(line);
+    if(handle_command(line))
+      waitpid(m_pid, &wait_status, options);
     linenoiseHistoryAdd(line);
     linenoiseFree(line);
-    waitpid(m_pid, &wait_status, options);
   }
 }
 
-void Debugger::handle_command(const std::string& command_full) {
+bool Debugger::handle_command(const std::string& command_full) {
   auto cmd_args = split(command_full, ' ');
 
   if(cmd_args.size() == 0)
-    return;
+    return -1;
 
   std::string cmd = cmd_args[0];
 
   for(auto& c : m_commands){
     if(is_prefix(cmd, c->command())) {
       std::cout << c->command() << std::endl;
-      c->handle_command(std::vector<std::string>(cmd_args.begin() + 1, cmd_args.end()));
-      return;
+      return c->handle_command(std::vector<std::string>(cmd_args.begin() + 1, cmd_args.end())) == 0 && c->should_wait();
     }
   }
   unknown_command(cmd);
+  return -1;
 }
 
 void Debugger::unknown_command(std::string cmd){

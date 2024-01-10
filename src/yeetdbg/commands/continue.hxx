@@ -19,6 +19,8 @@ namespace cmd {
         return "Continue execution.";
       };
 
+      bool should_wait() const override { return true; }
+
     private:
   };
 }
