@@ -23,7 +23,7 @@ namespace yeetdbg {
       uint64_t read_quad(uint64_t addr);
       void write_quad(uint64_t addr, uint64_t data);
 
-      uint64_t m_base;
+      uint64_t m_base = 0;
       std::string maps;
     private:
       void read_mappings();

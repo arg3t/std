@@ -7,14 +7,13 @@ void Breakpoint::enable(){
   if(status == ENABLED)
     return;
 
-  uint64_t real_addr = m_addr + (m_relative ? m_proc->m_base : 0);
   /* Fetch old instruction data in old point */
-  old_data = m_proc->read_quad(real_addr);
+  old_data = m_proc->read_quad(get_addr());
   uint64_t injected_interrupt = (old_data & ~0xff) | INT3;
 
   /* Replace instruction with int3 */
 
-  m_proc->write_quad(real_addr, injected_interrupt);
+  m_proc->write_quad(get_addr(), injected_interrupt);
   status = ENABLED;
 }
 
@@ -30,6 +29,6 @@ void Breakpoint::disable(){
     return;
 
   /* Replace instruction with int3 */
-  m_proc->write_quad(m_addr + (m_relative ? m_proc->m_base : 0), old_data);
+  m_proc->write_quad(get_addr(), old_data);
   status = DISABLED;
 }

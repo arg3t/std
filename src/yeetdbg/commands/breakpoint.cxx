@@ -35,12 +35,12 @@ int BreakpointManage::handle_command(std::vector<std::string> cmd) {
       return -1;
     }
   } else if (is_prefix(subcmd, "list")) {
-    auto t = new yeetdbg::Tableau<int, yeetdbg::Status, std::string, long, bool>(
+    auto t = new yeetdbg::Tableau<int, yeetdbg::Status, std::string, std::string, bool>(
         {"Index", "Status", "Address", "Old Data", "Is Relative"});
 
     int c = 0;
     for (auto &it : breakpoints) {
-      t->add_row(c++, it.is_enabled(), int_to_hex(it.get_addr()), 0, it.is_relative());
+      t->add_row(c++, it.is_enabled(), int_to_hex(it.get_addr()), int_to_hex(it.get_old_data()), it.is_relative());
     }
 
     std::cout << t->to_string();

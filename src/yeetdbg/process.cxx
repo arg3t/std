@@ -1,3 +1,4 @@
+#include <iostream>
 #include <process.hxx>
 #include <string>
 #include <utils.hxx>
@@ -25,7 +26,9 @@ void Process::start(){
   } else {
     m_pid = pid;
     waitpid(m_pid, &wait_status, 0);
+    std::cout << "Started process with PID " << m_pid << std::endl;
     m_status = PAUSED;
+    read_mappings();
   }
 }
 
