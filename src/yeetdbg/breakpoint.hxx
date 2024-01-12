@@ -23,6 +23,7 @@ namespace yeetdbg {
 
       void enable();
       void disable();
+      void tmp_disable();
 
     private:
       uint64_t m_addr;

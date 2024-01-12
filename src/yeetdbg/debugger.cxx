@@ -17,8 +17,16 @@ void Debugger::run(){
   int wait_status = process.wait(options);
 
   while((line = linenoise("ydb> ")) != nullptr){
-    if(handle_command(line))
+    if(handle_command(line)){
       wait_status = process.wait(options);
+
+      // TODO Figure out a way to enable all breakpoints before startup
+
+      if(wait_status) // Call signal handlers for all commands
+        for(auto it = m_commands.begin(); it != m_commands.end(); it++)
+          it->get()->handle_signal(wait_status);
+    }
+
     linenoiseHistoryAdd(line);
     linenoiseFree(line);
   }
@@ -33,9 +41,16 @@ bool Debugger::handle_command(const std::string& command_full) {
   std::string cmd = cmd_args[0];
 
   for(auto& c : m_commands){
-    if(is_prefix(cmd, c->command())) {
+    if(c->command().size() > 0 && is_prefix(cmd, c->command())) {
       std::cout << c->command() << std::endl;
-      return c->handle_command(std::vector<std::string>(cmd_args.begin() + 1, cmd_args.end())) == 0 && c->should_wait();
+
+      if(c->should_wait())
+        for(auto it = m_commands.begin(); it != m_commands.end(); it++)
+          it->get()->pre_exec();
+
+      return c->handle_command(std::vector<std::string>(cmd_args.begin() + 1,
+                                                        cmd_args.end())) == 0 &&
+             c->should_wait();
     }
   }
   unknown_command(cmd);

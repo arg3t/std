@@ -4,9 +4,6 @@
 using namespace yeetdbg;
 
 void Breakpoint::enable(){
-  if(status == ENABLED)
-    return;
-
   /* Fetch old instruction data in old point */
   old_data = m_proc->read_quad(get_addr());
   uint64_t injected_interrupt = (old_data & ~0xff) | INT3;
@@ -25,10 +22,14 @@ uint64_t Breakpoint::get_addr(){
 }
 
 void Breakpoint::disable(){
+  tmp_disable();
+  status = DISABLED;
+}
+
+void Breakpoint::tmp_disable(){
   if(status == DISABLED)
     return;
 
   /* Replace instruction with int3 */
   m_proc->write_quad(get_addr(), old_data);
-  status = DISABLED;
 }

@@ -39,8 +39,9 @@ int BreakpointManage::handle_command(std::vector<std::string> cmd) {
         {"Index", "Status", "Address", "Old Data", "Is Relative"});
 
     int c = 0;
-    for (auto &it : breakpoints) {
-      t->add_row(c++, it.is_enabled(), int_to_hex(it.get_addr()), int_to_hex(it.get_old_data()), it.is_relative());
+
+    for (auto &b : breakpoints) {
+      t->add_row(c++, b.is_enabled(), int_to_hex(b.get_addr()), int_to_hex(b.get_old_data()), b.is_relative());
     }
 
     std::cout << t->to_string();
@@ -80,6 +81,8 @@ int BreakpointManage::add_bp(std::string addr_str) {
 
     auto bp = yeetdbg::Breakpoint(addr, &m_proc, relative);
     breakpoints.push_back(bp);
+    bp_addr[addr] = &breakpoints.back();
+
   } catch (std::invalid_argument ex) {
     std::cout << "Unable to parse address " << addr_str << std::endl;
     return -1;
@@ -114,8 +117,30 @@ int BreakpointManage::del_bp(int i) {
     return -1;
   }
 
-  breakpoints.at(i).disable();
+  auto bp = breakpoints.at(i);
+  bp.disable();
+
+  bp_addr.erase(bp.get_addr());
   breakpoints.erase(breakpoints.begin() + i);
 
   return 0;
 }
+
+
+void BreakpointManage::handle_signal(uint64_t signal){
+  for(auto &bp : breakpoints){
+    if(bp.is_enabled()){
+      bp.tmp_disable();
+    }
+  }
+}
+
+
+void BreakpointManage::pre_exec() {
+  for(auto &bp : breakpoints){
+    if(bp.is_enabled()){
+      bp.enable();
+    }
+  }
+}
+
