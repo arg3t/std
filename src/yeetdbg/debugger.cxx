@@ -1,3 +1,4 @@
+#include <cstring>
 #include <iostream>
 #include <unistd.h>
 #include <sys/ptrace.h>
@@ -10,15 +11,33 @@
 
 using namespace yeetdbg;
 
+void main_signal_handler(int sig){
+  if(WIFEXITED(sig)){
+    std::cout << ">> Process exited with status code " << WEXITSTATUS(sig) << std::endl;
+  }else if(WIFSIGNALED(sig)){
+    std::cout << ">> Process terminated with signal SIG" << sigabbrev_np(WTERMSIG(sig)) << "[" << WTERMSIG(sig) << "]" << std::endl;
+  }else if(WIFSTOPPED(sig)){
+    std::cout << ">> Process stopped with signal SIG" << sigabbrev_np(WSTOPSIG(sig)) << "[" << WSTOPSIG(sig) << "]" << std::endl;
+  }else if(WIFCONTINUED(sig)){
+    std::cout << ">> Process stopped properly after continue" << std::endl;
+  }else{
+    std::cout << ">> Unknown signal " << int_to_hex(sig) << std::endl;
+  }
+}
+
 void Debugger::run(){
   int options = 0;
   char* line;
 
   int wait_status = process.wait(options);
 
+  main_signal_handler(wait_status);
+
   while((line = linenoise("ydb> ")) != nullptr){
     if(handle_command(line)){
       wait_status = process.wait(options);
+
+      main_signal_handler(wait_status);
 
       if(wait_status) // Call signal handlers for all commands
         for(auto it = m_commands.begin(); it != m_commands.end(); it++)
@@ -40,7 +59,7 @@ bool Debugger::handle_command(const std::string& command_full) {
 
   for(auto& c : m_commands){
     if(c->command().size() > 0 && is_prefix(cmd, c->command())) {
-      std::cout << c->command() << std::endl;
+      std::cout << ">> " << c->command() << std::endl;
 
       if(c->should_wait())
         for(auto it = m_commands.begin(); it != m_commands.end(); it++)

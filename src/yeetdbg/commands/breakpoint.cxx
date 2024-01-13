@@ -11,7 +11,7 @@ using namespace cmd;
 
 int BreakpointManage::handle_command(std::vector<std::string> cmd) {
   if (!(cmd.size() == 1 && is_prefix(cmd.at(0), "list")) && cmd.size() != 2) {
-    std::cout << "Command breakpoint needs two arguments!" << std::endl;
+    std::cout << ">> Command breakpoint needs two arguments!" << std::endl;
     return -1;
   }
 
@@ -24,14 +24,14 @@ int BreakpointManage::handle_command(std::vector<std::string> cmd) {
     try {
       return enable_bp(stoi(param));
     } catch (std::invalid_argument ex) {
-      std::cout << "'" << param << "' is not a valid integer" << std::endl;
+      std::cout << ">> '" << param << "' is not a valid integer" << std::endl;
       return -1;
     }
   } else if (is_prefix(subcmd, "disable")) {
     try {
       return disable_bp(stoi(param));
     } catch (std::invalid_argument ex) {
-      std::cout << "'" << param << "' is not a valid integer" << std::endl;
+      std::cout << ">> '" << param << "' is not a valid integer" << std::endl;
       return -1;
     }
   } else if (is_prefix(subcmd, "list")) {
@@ -113,7 +113,7 @@ int BreakpointManage::disable_bp(int i) {
 
 int BreakpointManage::del_bp(int i) {
   if (breakpoints.size() <= i) {
-    std::cout << "Breakpoint with idx " << i << " does not exist!" << std::endl;
+    std::cout << ">> Breakpoint with idx " << i << " does not exist!" << std::endl;
     return -1;
   }
 
