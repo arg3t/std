@@ -1,7 +1,6 @@
 #ifndef COMMAND_HXX
 #define COMMAND_HXX
 
-#include <memory>
 #include <string>
 #include <vector>
 #include <process.hxx>

@@ -6,4 +6,5 @@ add_library(
   process.cxx
   commands/continue.cxx
   commands/breakpoint.cxx
+  commands/registers.cxx
 )

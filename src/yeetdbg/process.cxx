@@ -1,6 +1,10 @@
+#include <algorithm>
+#include <cstdint>
 #include <iostream>
 #include <process.hxx>
 #include <string>
+#include <sys/user.h>
+#include <type_traits>
 #include <utils.hxx>
 #include <sys/ptrace.h>
 #include <sys/wait.h>
@@ -9,7 +13,40 @@
 #include <format>
 #include <sys/personality.h>
 
+using std::enable_if_t;
+
 using namespace yeetdbg;
+
+uint8_t find_reg_idx(reg v) {
+  auto it = std::find_if(g_registers.begin(), g_registers.end(),
+                         [v](reg_descriptor rd) { return rd.r == v; });
+
+  if(it == g_registers.end())
+    throw REGISTER_NOT_FOUND_EX;
+
+  return it - g_registers.begin();
+}
+
+uint8_t find_reg_idx(int v) {
+  auto it = std::find_if(g_registers.begin(), g_registers.end(),
+                         [v](reg_descriptor rd) { return rd.dwarfno == v; });
+
+  if(it == g_registers.end())
+    throw REGISTER_NOT_FOUND_EX;
+
+  return it - g_registers.begin();
+}
+
+uint8_t find_reg_idx(std::string v) {
+  auto it = std::find_if(g_registers.begin(), g_registers.end(),
+                         [v](reg_descriptor rd) { return rd.name == v; });
+
+  if(it == g_registers.end())
+    throw REGISTER_NOT_FOUND_EX;
+
+  return it - g_registers.begin();
+}
+
 
 void Process::start(){
   int pid = fork();
@@ -69,3 +106,30 @@ uint64_t Process::read_quad(uint64_t addr){
 void Process::write_quad(uint64_t addr, uint64_t data){
   ptrace(PTRACE_POKEDATA, m_pid, addr, data);
 }
+
+
+uint64_t Process::get_reg_by_idx(int r){
+  user_regs_struct regs;
+
+  ptrace(PTRACE_GETREGS, m_pid, nullptr, &regs);
+  return *(reinterpret_cast<uint64_t*>(&regs) + r);
+}
+
+void Process::set_reg_by_idx(int r, uint64_t data){
+  user_regs_struct regs;
+
+  ptrace(PTRACE_GETREGS, m_pid, nullptr, &regs);
+  *(reinterpret_cast<uint64_t*>(&regs) + r) = data;
+
+  ptrace(PTRACE_SETREGS, m_pid, nullptr, &regs);
+}
+
+uint64_t Process::get_reg_value(reg r) { return get_reg_by_idx(find_reg_idx(r)); }
+void Process::set_reg_value(reg r, uint64_t data) { set_reg_by_idx(find_reg_idx(r), data); }
+
+uint64_t Process::get_reg_value(int r) { return get_reg_by_idx(find_reg_idx(r)); }
+void Process::set_reg_value(int r, uint64_t data) { set_reg_by_idx(find_reg_idx(r), data); }
+
+uint64_t Process::get_reg_value(std::string r) { return get_reg_by_idx(find_reg_idx(r)); }
+void Process::set_reg_value(std::string r, uint64_t data) { set_reg_by_idx(find_reg_idx(r), data); }
+

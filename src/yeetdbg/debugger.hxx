@@ -3,6 +3,7 @@
 
 #include "commands/continue.hxx"
 #include "commands/breakpoint.hxx"
+#include "commands/registers.hxx"
 #include <memory>
 #include <string>
 
@@ -13,9 +14,11 @@ namespace yeetdbg {
       Debugger(std::string name): m_name(std::move(name)) {
         m_commands = std::vector<std::shared_ptr<cmd::Command>>{
           std::make_shared<cmd::Continue>(cmd::Continue{process}),
+          std::make_shared<cmd::Registers>(cmd::Registers{process}),
           std::make_shared<cmd::BreakpointManage>(cmd::BreakpointManage{process})
         };
       }
+
       void start_process();
 
       void run();

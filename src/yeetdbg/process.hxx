@@ -6,6 +6,8 @@
 #ifndef PROCESS_HXX
 #define PROCESS_HXX
 
+#define REGISTER_NOT_FOUND_EX 20
+
 namespace yeetdbg {
   enum STATUS {
     RUNNING,
@@ -72,23 +74,20 @@ namespace yeetdbg {
       uint64_t read_quad(uint64_t addr);
       void write_quad(uint64_t addr, uint64_t data);
 
-      // Using enums
       uint64_t get_reg_value(reg r);
       void set_reg_value(reg r, uint64_t data);
-
-      // Using dwarf numbers
       uint64_t get_reg_value(int r);
       void set_reg_value(int r, uint64_t data);
-
-      // Using dwarf numbers
-      uint64_t get_reg_value(const std::string& r);
-      void set_reg_value(const std::string& r, uint64_t data);
-
-
+      uint64_t get_reg_value(std::string r);
+      void set_reg_value(std::string r, uint64_t data);
 
       uint64_t m_base = 0;
       std::string maps;
     private:
+
+      uint64_t get_reg_by_idx(int r);
+      void set_reg_by_idx(int r, uint64_t data);
+
       void read_mappings();
 
       int m_pid;
