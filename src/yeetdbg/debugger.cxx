@@ -20,8 +20,6 @@ void Debugger::run(){
     if(handle_command(line)){
       wait_status = process.wait(options);
 
-      // TODO Figure out a way to enable all breakpoints before startup
-
       if(wait_status) // Call signal handlers for all commands
         for(auto it = m_commands.begin(); it != m_commands.end(); it++)
           it->get()->handle_signal(wait_status);

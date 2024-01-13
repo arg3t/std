@@ -81,6 +81,8 @@ namespace yeetdbg {
       uint64_t get_reg_value(std::string r);
       void set_reg_value(std::string r, uint64_t data);
 
+      void step_instruction(uint8_t count = 1);
+
       uint64_t m_base = 0;
       std::string maps;
     private:

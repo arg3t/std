@@ -133,3 +133,15 @@ void Process::set_reg_value(int r, uint64_t data) { set_reg_by_idx(find_reg_idx(
 uint64_t Process::get_reg_value(std::string r) { return get_reg_by_idx(find_reg_idx(r)); }
 void Process::set_reg_value(std::string r, uint64_t data) { set_reg_by_idx(find_reg_idx(r), data); }
 
+
+void Process::step_instruction(uint8_t count){
+  if(m_status == DEAD)
+    return;
+
+  if(count > 0){
+    m_status = RUNNING;
+    ptrace(PTRACE_SINGLESTEP, m_pid, nullptr, nullptr);
+    wait();
+    step_instruction(count - 1);
+  }
+}
