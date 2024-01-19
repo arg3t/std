@@ -1,3 +1,5 @@
+#include "dwarf/dwarf++.hh"
+#include "elf/elf++.hh"
 #include <algorithm>
 #include <cstdint>
 #include <iostream>
@@ -11,6 +13,7 @@
 #include <unistd.h>
 #include <fstream>
 #include <format>
+#include <fcntl.h>
 #include <sys/personality.h>
 
 using std::enable_if_t;
@@ -86,6 +89,12 @@ void Process::resume(){
   ptrace(PTRACE_CONT, m_pid, nullptr, nullptr);
 }
 
+void Process::initialize(){
+  auto fd = open(m_file.c_str(), O_RDONLY);
+  m_elf  = elf::elf {elf::create_mmap_loader(fd)};
+  m_dwarf = dwarf::dwarf {dwarf::elf::create_loader(m_elf)};
+}
+
 void Process::read_mappings(){
   std::ifstream fmaps(std::format("/proc/{}/maps", m_pid));
   std::string line;
@@ -144,4 +153,8 @@ void Process::step_instruction(uint8_t count){
     wait();
     step_instruction(count - 1);
   }
+}
+
+void handle_signal(int64_t signal){
+
 }

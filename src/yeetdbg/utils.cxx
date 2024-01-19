@@ -22,6 +22,12 @@ bool is_prefix(const std::string& s, const std::string& of){
   return std::equal(s.begin(), s.end(), of.begin());
 }
 
+bool is_suffix(const std::string& s, const std::string& of){
+  if (s.size() > of.size()) return false;
+
+  return std::equal(s.begin(), s.end(), of.end() - s.size());
+}
+
 std::string int_to_hex(long i){
   std::stringstream *stream = new std::stringstream();
   *stream << "0x"

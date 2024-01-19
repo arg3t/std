@@ -1,7 +1,9 @@
+#include "elf/elf++.hh"
 #include <cstdint>
 #include <array>
 #include <string>
 #include <vector>
+#include <dwarf/dwarf++.hh>
 
 #ifndef PROCESS_HXX
 #define PROCESS_HXX
@@ -66,7 +68,7 @@ namespace yeetdbg {
   class Process {
     public:
       Process() {};
-      Process(std::string file, std::vector<std::string> params): m_file(file), m_params(params) {}
+      Process(std::string file, std::vector<std::string> params): m_file(file), m_params(params) { initialize(); }
       void start();
       void resume();
       int wait(int options);
@@ -83,19 +85,29 @@ namespace yeetdbg {
 
       void step_instruction(uint8_t count = 1);
 
-      uint64_t m_base = 0;
-      std::string maps;
-    private:
+      uint64_t resolve_input(std::string input);
+      dwarf::die get_current_function();
 
+      uint64_t offset_by_base(uint64_t a) { return m_base + a; }
+      uint64_t negate_base(uint64_t a) { return a - m_base; }
+
+      void handle_signal(int64_t signal);
+
+    private:
       uint64_t get_reg_by_idx(int r);
       void set_reg_by_idx(int r, uint64_t data);
 
       void read_mappings();
+      void initialize();
 
+      uint64_t m_base = 0;
       int m_pid;
       std::string m_file;
       std::vector<std::string> m_params;
       STATUS m_status;
+      std::string maps;
+      elf::elf m_elf;
+      dwarf::dwarf m_dwarf;
   };
 }
 

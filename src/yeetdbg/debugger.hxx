@@ -1,9 +1,9 @@
 #ifndef YEETDBG_HXX
 #define YEETDBG_HXX
 
-#include "commands/continue.hxx"
+#include "commands/control_flow.hxx"
 #include "commands/breakpoint.hxx"
-#include "commands/registers.hxx"
+#include "commands/data.hxx"
 #include <memory>
 #include <string>
 
@@ -15,6 +15,7 @@ namespace yeetdbg {
         m_commands = std::vector<std::shared_ptr<cmd::Command>>{
           std::make_shared<cmd::Continue>(cmd::Continue{process}),
           std::make_shared<cmd::Registers>(cmd::Registers{process}),
+          std::make_shared<cmd::Memory>(cmd::Memory{process}),
           std::make_shared<cmd::BreakpointManage>(cmd::BreakpointManage{process})
         };
       }

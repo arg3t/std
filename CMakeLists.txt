@@ -23,6 +23,11 @@ add_executable(
     samples/sleep.c
 )
 
+add_executable(
+  dwarfer
+    samples/dwarf_test.c
+)
+
 add_custom_target(
     libelfin
     COMMAND make

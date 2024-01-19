@@ -18,7 +18,7 @@ void Breakpoint::enable(){
 
 uint64_t Breakpoint::get_addr(){
   if(m_relative)
-    return m_addr + m_proc->m_base;
+    return m_proc->offset_by_base(m_addr);
   else
     return m_addr;
 }

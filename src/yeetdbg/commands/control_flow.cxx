@@ -4,7 +4,7 @@
 #include <sys/ptrace.h>
 #include <sys/wait.h>
 
-#include "commands/continue.hxx"
+#include "commands/control_flow.hxx"
 
 using namespace cmd;
 

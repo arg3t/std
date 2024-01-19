@@ -12,6 +12,8 @@
 using namespace yeetdbg;
 
 void main_signal_handler(int sig){
+  if(sig == 0)
+    return;
   if(WIFEXITED(sig)){
     std::cout << ">> Process exited with status code " << WEXITSTATUS(sig) << std::endl;
   }else if(WIFSIGNALED(sig)){

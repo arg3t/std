@@ -4,7 +4,8 @@ add_library(
   debugger.cxx
   breakpoint.cxx
   process.cxx
-  commands/continue.cxx
+  resolver.cxx
+  commands/control_flow.cxx
   commands/breakpoint.cxx
-  commands/registers.cxx
+  commands/data.cxx
 )
