@@ -15,7 +15,7 @@ namespace cmd {
       virtual std::string description() const = 0;
       virtual bool should_wait() const = 0;
 
-      virtual void handle_signal(uint64_t signal) = 0;
+      virtual void handle_signal(siginfo_t signal) = 0;
       virtual void pre_exec() = 0;
 
       virtual ~Command() {}

@@ -11,7 +11,7 @@ namespace cmd {
       Continue(yeetdbg::Process &p): Command(p) {};
       int handle_command(std::vector<std::string>) override;
 
-      void handle_signal(uint64_t signal) override {}
+      void handle_signal(siginfo_t signal) override {}
       void pre_exec() override {}
 
       std::string command() const override {

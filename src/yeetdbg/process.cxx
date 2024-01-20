@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <iostream>
 #include <process.hxx>
+#include <stdexcept>
 #include <string>
 #include <sys/user.h>
 #include <type_traits>
@@ -72,6 +73,14 @@ void Process::start(){
   }
 }
 
+siginfo_t Process::get_siginfo(){
+  siginfo_t info;
+
+  if(ptrace(PTRACE_GETSIGINFO, m_pid, nullptr, &info) == 0)
+    return info;
+  throw -10;
+}
+
 int Process::wait(int options = 0){
   int wait_status;
 
@@ -92,7 +101,12 @@ void Process::resume(){
 void Process::initialize(){
   auto fd = open(m_file.c_str(), O_RDONLY);
   m_elf  = elf::elf {elf::create_mmap_loader(fd)};
-  m_dwarf = dwarf::dwarf {dwarf::elf::create_loader(m_elf)};
+  try {
+    m_dwarf = new dwarf::dwarf {dwarf::elf::create_loader(m_elf)};
+  } catch(dwarf::format_error){
+    m_dwarf = nullptr;
+    std::cout << "Format error when trying to read dwarf info";
+  }
 }
 
 void Process::read_mappings(){
@@ -155,6 +169,12 @@ void Process::step_instruction(uint8_t count){
   }
 }
 
-void handle_signal(int64_t signal){
-
+void Process::handle_signal(int64_t signal){
+  try{
+    for(auto &l : get_src_for_address(get_reg_value(reg::rip))){
+      std::cout << ">> " << l << std::endl;
+    }
+  }catch(std::out_of_range){
+    // TODO: Print assembly
+  }
 }

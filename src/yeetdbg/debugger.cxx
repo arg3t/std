@@ -1,3 +1,4 @@
+#include <csignal>
 #include <cstring>
 #include <iostream>
 #include <unistd.h>
@@ -11,20 +12,8 @@
 
 using namespace yeetdbg;
 
-void main_signal_handler(int sig){
-  if(sig == 0)
-    return;
-  if(WIFEXITED(sig)){
-    std::cout << ">> Process exited with status code " << WEXITSTATUS(sig) << std::endl;
-  }else if(WIFSIGNALED(sig)){
-    std::cout << ">> Process terminated with signal SIG" << sigabbrev_np(WTERMSIG(sig)) << "[" << WTERMSIG(sig) << "]" << std::endl;
-  }else if(WIFSTOPPED(sig)){
-    std::cout << ">> Process stopped with signal SIG" << sigabbrev_np(WSTOPSIG(sig)) << "[" << WSTOPSIG(sig) << "]" << std::endl;
-  }else if(WIFCONTINUED(sig)){
-    std::cout << ">> Process stopped properly after continue" << std::endl;
-  }else{
-    std::cout << ">> Unknown signal " << int_to_hex(sig) << std::endl;
-  }
+void main_signal_handler(siginfo_t sig){
+  std::cout << ">> " << strsignal(sig.si_signo) << "[" << sig.si_signo << "]" << std::endl;
 }
 
 void Debugger::run(){
@@ -33,21 +22,27 @@ void Debugger::run(){
 
   int wait_status = process.wait(options);
 
-  main_signal_handler(wait_status);
+  main_signal_handler(process.get_siginfo());
 
   while((line = linenoise("ydb> ")) != nullptr){
     if(handle_command(line)){
       wait_status = process.wait(options);
+      try{
+        auto s = process.get_siginfo();
 
-      main_signal_handler(wait_status);
+        main_signal_handler(s);
 
-      if(wait_status) // Call signal handlers for all commands
-        for(auto it = m_commands.begin(); it != m_commands.end(); it++)
-          it->get()->handle_signal(wait_status);
+        if(wait_status) // Call signal handlers for all commands
+          for(auto it = m_commands.begin(); it != m_commands.end(); it++)
+            it->get()->handle_signal(s);
+      }catch(int){
+        continue;
+      }
     }
 
     linenoiseHistoryAdd(line);
     linenoiseFree(line);
+    std::cout.flush();
   }
 }
 

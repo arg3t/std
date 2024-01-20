@@ -1,4 +1,5 @@
 #include "elf/elf++.hh"
+#include <bits/types/siginfo_t.h>
 #include <cstdint>
 #include <array>
 #include <string>
@@ -93,12 +94,23 @@ namespace yeetdbg {
 
       void handle_signal(int64_t signal);
 
+      std::vector<std::string> get_src_for_address(uint64_t addr, int surround_line_count = 2);
+
+      siginfo_t get_siginfo();
+
+      ~Process(){
+        delete m_dwarf;
+      }
+
     private:
       uint64_t get_reg_by_idx(int r);
       void set_reg_by_idx(int r, uint64_t data);
 
       void read_mappings();
       void initialize();
+
+      dwarf::die get_die_at_addr(uint64_t);
+      dwarf::line_table::iterator get_line_table_entry(uint64_t addr);
 
       uint64_t m_base = 0;
       int m_pid;
@@ -107,7 +119,7 @@ namespace yeetdbg {
       STATUS m_status;
       std::string maps;
       elf::elf m_elf;
-      dwarf::dwarf m_dwarf;
+      dwarf::dwarf* m_dwarf;
   };
 }
 

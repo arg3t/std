@@ -127,7 +127,7 @@ int BreakpointManage::del_bp(int i) {
 }
 
 
-void BreakpointManage::handle_signal(uint64_t signal){
+void BreakpointManage::handle_signal(siginfo_t signal){
   for(auto &bp : breakpoints){
     if(bp.get_status() == yeetdbg::ENABLED){
       bp.disable();
