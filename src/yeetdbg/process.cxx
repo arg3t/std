@@ -1,6 +1,8 @@
+#include "Zydis/Disassembler.h"
 #include "dwarf/dwarf++.hh"
 #include "elf/elf++.hh"
 #include <algorithm>
+#include <bits/types/siginfo_t.h>
 #include <cstdint>
 #include <iostream>
 #include <process.hxx>
@@ -16,6 +18,7 @@
 #include <format>
 #include <fcntl.h>
 #include <sys/personality.h>
+#include <Zydis/Zydis.h>
 
 using std::enable_if_t;
 
@@ -51,7 +54,6 @@ uint8_t find_reg_idx(std::string v) {
   return it - g_registers.begin();
 }
 
-
 void Process::start(){
   int pid = fork();
   int wait_status;
@@ -78,6 +80,7 @@ siginfo_t Process::get_siginfo(){
 
   if(ptrace(PTRACE_GETSIGINFO, m_pid, nullptr, &info) == 0)
     return info;
+  m_status = DEAD;
   throw -10;
 }
 
@@ -98,15 +101,59 @@ void Process::resume(){
   ptrace(PTRACE_CONT, m_pid, nullptr, nullptr);
 }
 
+ZydisDisassembledInstruction get_instruction(uint64_t m1, uint64_t m2, uint64_t run_addr){
+  ZyanU8 data[16];
+  ZydisDisassembledInstruction instruction;
+
+  // Some black magic memory shit
+  (reinterpret_cast<uint64_t*>(data))[0] = m1;
+  (reinterpret_cast<uint64_t*>(data))[1] = m2;
+
+  if(!ZYAN_SUCCESS(ZydisDisassembleIntel(
+      ZYDIS_MACHINE_MODE_LONG_64,
+      run_addr,
+      data,
+      16,
+      &instruction)))
+      throw -1;
+
+  return instruction;
+}
+
+void Process::handle_signal(siginfo_t signal){
+  if(m_status == DEAD)
+    return;
+
+  try{
+    for(auto &l : get_src_for_address(get_reg_value(reg::rip))){
+      std::cout << ">> " << l << std::endl;
+    }
+    return;
+  }catch(std::out_of_range){
+  }
+
+  try{
+    uint64_t addr = get_reg_value(reg::rip) - 1;
+    ZydisDisassembledInstruction instruction;
+    for(int i = 0; i < 6; i++){
+      instruction = get_instruction(read_quad(addr), read_quad(addr + 8), addr);
+      std::cout << int_to_hex(addr) << ": " << instruction.text << std::endl;
+      addr += instruction.info.length;
+    }
+  }catch(int){
+  }
+}
+
+
 void Process::initialize(){
   auto fd = open(m_file.c_str(), O_RDONLY);
   m_elf  = elf::elf {elf::create_mmap_loader(fd)};
-  try {
-    m_dwarf = new dwarf::dwarf {dwarf::elf::create_loader(m_elf)};
-  } catch(dwarf::format_error){
-    m_dwarf = nullptr;
-    std::cout << "Format error when trying to read dwarf info";
-  }
+  // TODO: Add support for DWARF 5 and make this shit work.
+  // try {
+  //   m_dwarf = dwarf::dwarf {dwarf::elf::create_loader(m_elf)};
+  // } catch(dwarf::format_error){
+  //   std::cout << "Format error when trying to read dwarf info" << std::endl;
+  // }
 }
 
 void Process::read_mappings(){
@@ -166,15 +213,5 @@ void Process::step_instruction(uint8_t count){
     ptrace(PTRACE_SINGLESTEP, m_pid, nullptr, nullptr);
     wait();
     step_instruction(count - 1);
-  }
-}
-
-void Process::handle_signal(int64_t signal){
-  try{
-    for(auto &l : get_src_for_address(get_reg_value(reg::rip))){
-      std::cout << ">> " << l << std::endl;
-    }
-  }catch(std::out_of_range){
-    // TODO: Print assembly
   }
 }

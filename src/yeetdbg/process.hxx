@@ -92,15 +92,11 @@ namespace yeetdbg {
       uint64_t offset_by_base(uint64_t a) { return m_base + a; }
       uint64_t negate_base(uint64_t a) { return a - m_base; }
 
-      void handle_signal(int64_t signal);
+      void handle_signal(siginfo_t signal);
 
       std::vector<std::string> get_src_for_address(uint64_t addr, int surround_line_count = 2);
 
       siginfo_t get_siginfo();
-
-      ~Process(){
-        delete m_dwarf;
-      }
 
     private:
       uint64_t get_reg_by_idx(int r);
@@ -119,7 +115,7 @@ namespace yeetdbg {
       STATUS m_status;
       std::string maps;
       elf::elf m_elf;
-      dwarf::dwarf* m_dwarf;
+      dwarf::dwarf m_dwarf;
   };
 }
 

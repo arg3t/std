@@ -9,7 +9,26 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(YeetDbg VERSION 1.0)
 
-include_directories(include ext/libelfin/ ext/linenoise/ src/yeetdbg)
+include_directories(
+  include
+  ext/libelfin/
+  ext/linenoise/
+  ext/zydis/include/
+  ext/zydis/dependencies/zycore/include/
+  src/yeetdbg
+)
+
+add_custom_target(
+    libelfin
+    COMMAND make
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/ext/libelfin/
+)
+
+option(ZYDIS_BUILD_TOOLS "" OFF)
+option(ZYDIS_BUILD_EXAMPLES "" OFF)
+add_subdirectory(ext/zydis)
+
+add_subdirectory(src/yeetdbg)
 
 add_executable(
   yeetdbg
@@ -28,21 +47,13 @@ add_executable(
     samples/dwarf_test.c
 )
 
-add_custom_target(
-    libelfin
-    COMMAND make
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/ext/libelfin/
-)
-
-add_subdirectory(src/yeetdbg)
-
 target_link_libraries(
-  yeetdbg
+  yeetdbg PRIVATE
+  Debugger
+  ${PROJECT_BINARY_DIR}/ext/zydis/libZydis.a
   ${PROJECT_SOURCE_DIR}/ext/libelfin/dwarf/libdwarf++.so
   ${PROJECT_SOURCE_DIR}/ext/libelfin/elf/libelf++.so
-  Debugger
 )
-
 add_dependencies(yeetdbg libelfin)
 
 # Sample executables autobuild

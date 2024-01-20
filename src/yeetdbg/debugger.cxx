@@ -23,6 +23,7 @@ void Debugger::run(){
   int wait_status = process.wait(options);
 
   main_signal_handler(process.get_siginfo());
+  process.handle_signal(process.get_siginfo());
 
   while((line = linenoise("ydb> ")) != nullptr){
     if(handle_command(line)){
@@ -35,6 +36,8 @@ void Debugger::run(){
         if(wait_status) // Call signal handlers for all commands
           for(auto it = m_commands.begin(); it != m_commands.end(); it++)
             it->get()->handle_signal(s);
+
+        process.handle_signal(s);
       }catch(int){
         continue;
       }

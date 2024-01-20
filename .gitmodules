@@ -4,3 +4,6 @@
 [submodule "ext/linenoise"]
 	path = ext/linenoise
 	url = https://github.com/antirez/linenoise.git
+[submodule "ext/zydis"]
+	path = ext/zydis
+	url = https://github.com/zyantific/zydis.git

@@ -37,10 +37,7 @@ uint64_t Process::resolve_input(std::string s){
 }
 
 dwarf::die Process::get_die_at_addr(uint64_t addr){
-  if(m_dwarf == nullptr)
-    throw -1;
-
-  for(auto &cu : m_dwarf->compilation_units()){
+  for(auto cu : m_dwarf.compilation_units()){
     if(!dwarf::die_pc_range(cu.root()).contains(addr))
       continue;
 
@@ -54,10 +51,7 @@ dwarf::die Process::get_die_at_addr(uint64_t addr){
 }
 
 dwarf::line_table::iterator Process::get_line_table_entry(uint64_t addr){
-  if(m_dwarf == nullptr)
-    throw -1;
-
-  for(auto &cu : m_dwarf->compilation_units()){
+  for(auto &cu : m_dwarf.compilation_units()){
     if(!dwarf::die_pc_range(cu.root()).contains(addr))
       continue;
 
