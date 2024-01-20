@@ -14,6 +14,7 @@ namespace yeetdbg {
       Debugger(std::string name): m_name(std::move(name)) {
         m_commands = std::vector<std::shared_ptr<cmd::Command>>{
           std::make_shared<cmd::Continue>(cmd::Continue{process}),
+          std::make_shared<cmd::Step>(cmd::Step{process}),
           std::make_shared<cmd::Registers>(cmd::Registers{process}),
           std::make_shared<cmd::Memory>(cmd::Memory{process}),
           std::make_shared<cmd::BreakpointManage>(cmd::BreakpointManage{process})

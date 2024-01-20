@@ -23,7 +23,7 @@ void Debugger::run(){
   int wait_status = process.wait(options);
 
   main_signal_handler(process.get_siginfo());
-  process.handle_signal(process.get_siginfo());
+  std::cout << "Type in \"help\" to read help text" << std::endl;
 
   while((line = linenoise("ydb> ")) != nullptr){
     if(handle_command(line)){
@@ -56,6 +56,14 @@ bool Debugger::handle_command(const std::string& command_full) {
     return -1;
 
   std::string cmd = cmd_args[0];
+
+  if(is_prefix(cmd, "help")){
+    for(auto& c : m_commands){
+      std::cout << "[" << c->command() << "]:" << std::endl;
+      std::cout << c->description() << std::endl << std::endl;
+    }
+    return false;
+  }
 
   for(auto& c : m_commands){
     if(c->command().size() > 0 && is_prefix(cmd, c->command())) {

@@ -15,7 +15,7 @@ namespace yeetdbg {
 
   class Breakpoint {
     public:
-      Breakpoint(uint64_t addr, Process *proc, bool relative): m_addr(addr), m_proc(proc), m_relative(relative), status(DISABLED) {}
+      Breakpoint(uint64_t addr, Process *proc, bool relative): m_addr(addr), m_proc(proc), m_relative(relative), status(ENABLED) {}
       uint64_t get_addr();
 
       uint64_t get_old_data() { return old_data; }

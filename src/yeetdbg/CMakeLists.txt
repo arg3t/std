@@ -5,7 +5,6 @@ add_library(
   breakpoint.cxx
   process.cxx
   resolver.cxx
-  commands/control_flow.cxx
   commands/breakpoint.cxx
   commands/data.cxx
 )
