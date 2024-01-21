@@ -7,7 +7,7 @@
 #include <tuple>
 #include <vector>
 
-namespace yeetdbg {
+namespace std {
 
 std::string toString(std::string s) { return s; }
 
@@ -21,7 +21,7 @@ std::string toString(T &s) {
 
 std::string toString(bool b) { return b ? "true" : "false"; }
 
-std::string toString(yeetdbg::Status s) {
+std::string toString(std::Status s) {
   switch (s) {
   case ENABLED:
     return "Enabled";
@@ -137,6 +137,6 @@ private:
   int m_padding;
   char m_sep;
 };
-} // namespace yeetdbg
+} // namespace std
 
 #endif

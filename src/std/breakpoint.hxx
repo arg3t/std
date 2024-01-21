@@ -7,7 +7,7 @@
 
 #define INT3 0xCC
 
-namespace yeetdbg {
+namespace std {
   enum Status {
     ENABLED,
     DISABLED

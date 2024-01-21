@@ -9,7 +9,7 @@ namespace cmd {
 
   class Continue: public Command {
     public:
-      Continue(yeetdbg::Process &p): Command(p) {};
+      Continue(std::Process &p): Command(p) {};
       int handle_command(std::vector<std::string>) override {
         m_proc.resume();
         return 0;
@@ -33,7 +33,7 @@ namespace cmd {
 
   class Step: public Command {
     public:
-      Step(yeetdbg::Process &p): Command(p) {};
+      Step(std::Process &p): Command(p) {};
       int handle_command(std::vector<std::string> params) override {
         int count = 0;
         if(params.size() > 0){

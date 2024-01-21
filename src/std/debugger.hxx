@@ -7,7 +7,7 @@
 #include <memory>
 #include <string>
 
-namespace yeetdbg {
+namespace std {
 
   class Debugger {
     public:

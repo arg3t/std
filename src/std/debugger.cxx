@@ -10,7 +10,7 @@
 #include "utils.hxx"
 #include "linenoise.h"
 
-using namespace yeetdbg;
+using namespace std;
 
 void main_signal_handler(siginfo_t sig){
   std::cout << ">> " << strsignal(sig.si_signo) << "[" << sig.si_signo << "]" << std::endl;
@@ -25,7 +25,7 @@ void Debugger::run(){
   main_signal_handler(process.get_siginfo());
   std::cout << "Type in \"help\" to read help text" << std::endl;
 
-  while((line = linenoise("ydb> ")) != nullptr){
+  while((line = linenoise("std> ")) != nullptr){
     if(handle_command(line)){
       wait_status = process.wait(options);
       try{

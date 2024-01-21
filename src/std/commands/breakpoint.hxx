@@ -11,7 +11,7 @@
 namespace cmd {
   class BreakpointManage: public Command {
     public:
-      BreakpointManage(yeetdbg::Process &p): Command(p) {};
+      BreakpointManage(std::Process &p): Command(p) {};
       int handle_command(std::vector<std::string>) override;
 
       std::string command() const override {
@@ -32,8 +32,8 @@ namespace cmd {
       bool should_wait() const override { return false; }
 
     private:
-      std::vector<yeetdbg::Breakpoint> breakpoints;
-      std::map<uint64_t, yeetdbg::Breakpoint*> bp_addr;
+      std::vector<std::Breakpoint> breakpoints;
+      std::map<uint64_t, std::Breakpoint*> bp_addr;
 
       int enable_bp(int i);
       int disable_bp(int i);

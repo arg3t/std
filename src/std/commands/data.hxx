@@ -9,7 +9,7 @@
 namespace cmd {
   class Memory: public Command {
     public:
-      Memory(yeetdbg::Process &p): Command(p) {};
+      Memory(std::Process &p): Command(p) {};
       int handle_command(std::vector<std::string>) override;
 
       void handle_signal(siginfo_t signal) override {}
@@ -32,7 +32,7 @@ namespace cmd {
 
   class Registers: public Command {
     public:
-      Registers(yeetdbg::Process &p): Command(p) {};
+      Registers(std::Process &p): Command(p) {};
       int handle_command(std::vector<std::string>) override;
 
       void handle_signal(siginfo_t signal) override {}

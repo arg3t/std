@@ -11,7 +11,7 @@
 
 #define REGISTER_NOT_FOUND_EX 20
 
-namespace yeetdbg {
+namespace std {
   enum STATUS {
     RUNNING,
     PAUSED,

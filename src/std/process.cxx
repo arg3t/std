@@ -22,7 +22,7 @@
 
 using std::enable_if_t;
 
-using namespace yeetdbg;
+using namespace std;
 
 uint8_t find_reg_idx(reg v) {
   auto it = std::find_if(g_registers.begin(), g_registers.end(),

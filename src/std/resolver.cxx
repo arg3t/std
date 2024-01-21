@@ -7,7 +7,7 @@
 #include <vector>
 #include <format>
 
-using namespace yeetdbg;
+using namespace std;
 
 // TODO support arithmetic, switch to flex and bison
 

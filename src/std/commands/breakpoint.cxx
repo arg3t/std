@@ -35,7 +35,7 @@ int BreakpointManage::handle_command(std::vector<std::string> cmd) {
       return -1;
     }
   } else if (is_prefix(subcmd, "list")) {
-    auto t = new yeetdbg::Tableau<int, yeetdbg::Status, std::string, std::string, bool>(
+    auto t = new std::Tableau<int, std::Status, std::string, std::string, bool>(
         {"Index", "Status", "Address", "Old Data", "Is Relative"});
 
     int c = 0;
@@ -60,7 +60,7 @@ int BreakpointManage::handle_command(std::vector<std::string> cmd) {
   return 0;
 }
 
-void print_breakpoints(std::vector<yeetdbg::Breakpoint> breakpoints) {
+void print_breakpoints(std::vector<std::Breakpoint> breakpoints) {
   for (auto &b : breakpoints) {
   }
 }
@@ -79,7 +79,7 @@ int BreakpointManage::add_bp(std::string addr_str) {
       relative = false;
     }
 
-    auto bp = yeetdbg::Breakpoint(addr, &m_proc, relative);
+    auto bp = std::Breakpoint(addr, &m_proc, relative);
     breakpoints.push_back(bp);
     bp_addr[bp.get_addr()] = &breakpoints.back();
 
@@ -97,7 +97,7 @@ int BreakpointManage::enable_bp(int i) {
     return -1;
   }
 
-  breakpoints.at(i).set_status(yeetdbg::ENABLED);
+  breakpoints.at(i).set_status(std::ENABLED);
   return 0;
 }
 
@@ -107,7 +107,7 @@ int BreakpointManage::disable_bp(int i) {
     return -1;
   }
 
-  breakpoints.at(i).set_status(yeetdbg::DISABLED);
+  breakpoints.at(i).set_status(std::DISABLED);
   return 0;
 }
 
@@ -129,7 +129,7 @@ int BreakpointManage::del_bp(int i) {
 
 void BreakpointManage::handle_signal(siginfo_t signal){
   for(auto &bp : breakpoints){
-    if(bp.get_status() == yeetdbg::ENABLED){
+    if(bp.get_status() == std::ENABLED){
       bp.disable();
     }
   }
@@ -137,17 +137,17 @@ void BreakpointManage::handle_signal(siginfo_t signal){
 
 
 void BreakpointManage::pre_exec() {
-  auto pc = m_proc.get_reg_value(yeetdbg::reg::rip);
+  auto pc = m_proc.get_reg_value(std::reg::rip);
   auto prev_instruction = pc - 1;
 
   if(bp_addr.count(prev_instruction)){
-    m_proc.set_reg_value(yeetdbg::reg::rip, prev_instruction);
+    m_proc.set_reg_value(std::reg::rip, prev_instruction);
     m_proc.step_instruction(1);
   }
 
   // TODO Sort by address to prevent overlaps
   for(auto &bp : breakpoints){
-    if(bp.get_status() == yeetdbg::ENABLED){
+    if(bp.get_status() == std::ENABLED){
       bp.enable();
     }
   }

@@ -7,7 +7,7 @@ set(CMAKE_BUILD_TYPE Debug)
 
 set(CMAKE_CXX_STANDARD 20)
 
-project(YeetDbg VERSION 1.0)
+project(std VERSION 1.0)
 
 include_directories(
   include
@@ -15,7 +15,7 @@ include_directories(
   ext/linenoise/
   ext/zydis/include/
   ext/zydis/dependencies/zycore/include/
-  src/yeetdbg
+  src/std
 )
 
 add_custom_target(
@@ -28,10 +28,10 @@ option(ZYDIS_BUILD_TOOLS "" OFF)
 option(ZYDIS_BUILD_EXAMPLES "" OFF)
 add_subdirectory(ext/zydis)
 
-add_subdirectory(src/yeetdbg)
+add_subdirectory(src/std)
 
 add_executable(
-  yeetdbg
+  std
     src/main.cxx
     ext/linenoise/linenoise.c
 )
@@ -48,13 +48,13 @@ add_executable(
 )
 
 target_link_libraries(
-  yeetdbg PRIVATE
+  std PRIVATE
   Debugger
   ${PROJECT_BINARY_DIR}/ext/zydis/libZydis.a
   ${PROJECT_SOURCE_DIR}/ext/libelfin/dwarf/libdwarf++.so
   ${PROJECT_SOURCE_DIR}/ext/libelfin/elf/libelf++.so
 )
-add_dependencies(yeetdbg libelfin)
+add_dependencies(std libelfin)
 
 # Sample executables autobuild
 

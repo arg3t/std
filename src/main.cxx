@@ -6,7 +6,7 @@
 #include "debugger.hxx"
 #include "utils.hxx"
 
-using namespace yeetdbg;
+using namespace std;
 
 int main(int argc, char *argv[]) {
   if (argc < 2) {

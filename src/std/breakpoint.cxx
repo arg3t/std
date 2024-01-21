@@ -1,7 +1,7 @@
 #include <breakpoint.hxx>
 #include <sys/ptrace.h>
 
-using namespace yeetdbg;
+using namespace std;
 
 void Breakpoint::enable(){
   if(old_data_populated)
